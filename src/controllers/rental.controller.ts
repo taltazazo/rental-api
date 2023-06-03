@@ -46,6 +46,8 @@ export default class RentalController extends BaseController {
     // so for this problem we can use a distributed message queues and distribute the requests between the queues by carIds
     // every carId will be in a specific queue and the requests for this carId will be in this queue
     // we can implement it with load balancer. ex: every carId from 1 to 100 will be in queue 1, from 101 to 200 will be in queue 2, etc...
+    // (if we save cars rentals in the car document, there will not be a race condition because mongodb is ACID. but the problem with
+    // that approach is that we will have a huge document and it is not scalable due to the 16MB limit of mongodb documents)
     //(if we use here array instead of db and assume that there are no another instance of the server we can
     // use a lock (mutex) to make sure that the rentals are created in the right order)
 
