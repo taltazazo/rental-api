@@ -17,6 +17,13 @@ describe("test users controller - integration", () => {
     await db.setUp();
   });
 
+  beforeEach(() => {
+    container.registerInstance("UserModel", UserModel);
+    container.registerInstance("UserSchemaValidation", UserSchemaValidation);
+    const userService = new UserService();
+    container.registerInstance(UserService, userService);
+  });
+
   afterAll(async () => {
     await db.dropDatabase();
   });
@@ -27,10 +34,6 @@ describe("test users controller - integration", () => {
   });
 
   it("get all users function - should return mock user data", async () => {
-    container.registerInstance("UserModel", UserModel);
-    container.registerInstance("UserSchemaValidation", UserSchemaValidation);
-    const userService = new UserService();
-    container.registerInstance(UserService, userService);
     const userController = container.resolve(UserController);
 
     const validUser = new UserModel(validUserData);
@@ -47,11 +50,6 @@ describe("test users controller - integration", () => {
     );
   });
   it("post function - should save mock user data", async () => {
-    container.registerInstance("UserModel", UserModel);
-    const validation = new UserSchemaValidation();
-    container.registerInstance("UserSchemaValidation", validation);
-    const userService = new UserService();
-    container.registerInstance(UserService, userService);
     const userController = container.resolve(UserController);
 
     const req = getMockReq({ body: validUserData });
@@ -64,10 +62,6 @@ describe("test users controller - integration", () => {
     expect(res.send).toBeCalledWith(expect.objectContaining(validUserData));
   });
   it("post function - should return 400 missing prop", () => {
-    container.registerInstance("UserModel", UserModel);
-    container.registerInstance("UserSchemaValidation", UserSchemaValidation);
-    const userService = new UserService();
-    container.registerInstance(UserService, userService);
     const userController = container.resolve(UserController);
 
     const invalidUserData = {
