@@ -15,29 +15,22 @@ export default class RentalService extends BaseService<RentalSI> {
     start: Date,
     end: Date
   ): Promise<boolean> => {
-    const agg = [
-      {
-        $match: {
-          carId: new mongoose.Types.ObjectId(carId),
-          $expr: {
-            $not: {
-              $or: [
-                {
-                  $gt: [new Date(start), "$end"],
-                },
-                {
-                  $lt: [new Date(end), "$start"],
-                },
-              ],
+    const rental = await this.model.findOne({
+      carId: new mongoose.Types.ObjectId(carId),
+      $expr: {
+        $not: {
+          $or: [
+            {
+              $gt: [new Date(start), "$end"],
             },
-          },
+            {
+              $lt: [new Date(end), "$start"],
+            },
+          ],
         },
       },
-    ];
-    // TODO:: this aggregation should be in RentalQueryBuilder
-    // should add another stage instead of getting all rentals objects to memory
-    const rentals = await this.model.aggregate(agg);
+    });
 
-    return rentals.length === 0;
+    return !rental;
   };
 }
